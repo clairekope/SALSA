@@ -40,7 +40,7 @@ class AbsorberExtractor():
 
     wavelegnth_center: float, optional
         The specific absorption line to look at (in unit Angstrom). None
-        defaults to strongest absorption line for specified ion
+        defaults to strongest absorption line for speciofied ion
         (using trident's ion table).
         Default: None
 
@@ -70,13 +70,17 @@ class AbsorberExtractor():
         between 0 and 1.
         Default: 0.8
 
+    abundance_table_args: dict, optional
+        Dictionary of parameters for reading alternative abundance data.
+
     """
 
     def __init__(self, ds_filename, ray_filename,
-                ion_name='H I', cut_region_filters=None,
-                wavelength_center=None, velocity_res = 10,
-                spectacle_defaults=None, spectacle_res=None,
-                absorber_min=None, frac=0.8):
+                 ion_name='H I', cut_region_filters=None,
+                 wavelength_center=None, velocity_res = 10,
+                 spectacle_defaults=None, spectacle_res=None,
+                 absorber_min=None, frac=0.8,
+                 abundance_table_args=None):
 
 
 
@@ -90,6 +94,7 @@ class AbsorberExtractor():
         self.ion_name = ion_name
         self.cut_region_filters = cut_region_filters
         self.frac = frac
+        self.abundance_table_args = abundance_table_args
 
         #add ion name to list of all ions to be plotted
         self.ion_list = [ion_name]
@@ -479,7 +484,7 @@ class AbsorberExtractor():
 
         #use auto feature to capture full line
         spect_gen = trident.SpectrumGenerator(lambda_min="auto", lambda_max="auto", dlambda = self.velocity_res, bin_space="velocity")
-        spect_gen.make_spectrum(self.data, lines=ion_list)
+        spect_gen.make_spectrum(self.data, lines=ion_list, abundance_table_args=self.abundance_table_args)
 
         #get fields from spectra and give correct units
         flux = spect_gen.flux_field

@@ -46,6 +46,9 @@ class AbsorberPlotter(AbsorberExtractor):
     absorber_fields : list of strings, optional
         Additional ions to include in plots/Spectra, enter as list.
 
+    abundance_table_args: dict, optional
+        Dictionary of parameters for reading alternative abundance data.
+
     north_vector : array type, optional
         vector used to fix the orientation of the slice plot defaults to z-axis
 
@@ -125,32 +128,33 @@ class AbsorberPlotter(AbsorberExtractor):
     """
 
     def __init__(self,
-                ds_filename,
-                ray_filename,
-                ion_name='H I',
-                ftype='gas',
-                cut_region_filters=None,
-                slice_field=None,
-                absorber_fields=[],
-                north_vector=[0, 0, 1],
-                center_gal = None,
-                wavelength_center=None,
-                wavelength_width = 30,
-                velocity_width = 3000,
-                wavelength_res = 0.1,
-                velocity_res = 10,
-                use_spectacle=False,
-                plot_spectacle=False,
-                spectacle_defaults=None,
-                spectacle_res=None,
-                plot_spice=False,
-                absorber_min=None,
-                frac=0.8,
-                num_dense_min=None,
-                num_dense_max=None,
-                markers=True,
-                mark_plot_args=None,
-                figure=None):
+                 ds_filename,
+                 ray_filename,
+                 ion_name='H I',
+                 ftype='gas',
+                 cut_region_filters=None,
+                 slice_field=None,
+                 absorber_fields=[],
+                 abundance_table_args=None,
+                 north_vector=[0, 0, 1],
+                 center_gal = None,
+                 wavelength_center=None,
+                 wavelength_width = 30,
+                 velocity_width = 3000,
+                 wavelength_res = 0.1,
+                 velocity_res = 10,
+                 use_spectacle=False,
+                 plot_spectacle=False,
+                 spectacle_defaults=None,
+                 spectacle_res=None,
+                 plot_spice=False,
+                 absorber_min=None,
+                 frac=0.8,
+                 num_dense_min=None,
+                 num_dense_max=None,
+                 markers=True,
+                 mark_plot_args=None,
+                 figure=None):
         #set file names and ion name
         if isinstance(ds_filename, str):
             self.ds = yt.load(ds_filename)
@@ -217,6 +221,7 @@ class AbsorberPlotter(AbsorberExtractor):
         self.wavelegnth_res = wavelength_res
         self.velocity_width = velocity_width
         self.velocity_res = velocity_res
+        self.abundance_table_args = abundance_table_args
 
         #default spectacle resolution to velocity_res
         if spectacle_res is None:
@@ -437,7 +442,8 @@ class AbsorberPlotter(AbsorberExtractor):
                                               bin_space="velocity")
 
         #generate spectra and return fields
-        spect_gen.make_spectrum(self.data, lines=ion_list)
+        spect_gen.make_spectrum(self.data, lines=ion_list,
+                                abundance_table_args=self.abundance_table_args)
         flux = spect_gen.flux_field
         velocity = spect_gen.lambda_field.in_units('km/s')
 
@@ -508,7 +514,9 @@ class AbsorberPlotter(AbsorberExtractor):
 
         #use wavelength_width to set the range
         spect_gen = trident.SpectrumGenerator(lambda_min=wave_min, lambda_max=wave_max, dlambda = self.wavelegnth_res)
-        spect_gen.make_spectrum(self.data, lines=ion_list, observing_redshift=self.ds.current_redshift)
+        spect_gen.make_spectrum(self.data, lines=ion_list,
+                                observing_redshift=self.ds.current_redshift,
+                                abundance_table_args=self.abundance_table_args)
 
 
         #get fields from spectra and give correct units
