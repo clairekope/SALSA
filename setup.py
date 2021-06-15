@@ -25,4 +25,4 @@ setup(name="astro-salsa",
       packages=find_packages(),
       classifiers=[ "Programming Language :: Python :: 3"],
       install_requires=dependecies,
-      extra_require={'spectacle':)
+      extra_require={'spectacle':opt_spectacle)
