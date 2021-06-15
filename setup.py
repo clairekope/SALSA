@@ -6,8 +6,11 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 #base dependencies
 #NOTE: gcc compiler is needed to install some packages
-dependecies=['numpy', 'yt', 'trident', 'spectacle', 'matplotlib', 'pandas',
+dependecies=['numpy', 'yt<=3.6.1', 'trident<=1.2.3', 
+             'matplotlib<=3.3.4', 'pandas',
              'scipy', 'mpi4py']
+
+opt_spectacle=['astropy<=4', 'specutils<=0.6.1', 'gwcs<=0.11.0', 'spectacle']
 
 setup(name="astro-salsa",
       version="1.0.0",
@@ -21,4 +24,5 @@ setup(name="astro-salsa",
       url="https://github.com/biboyd/SALSA",
       packages=find_packages(),
       classifiers=[ "Programming Language :: Python :: 3"],
-      install_requires=dependecies)
+      install_requires=dependecies,
+      extra_require={'spectacle':)

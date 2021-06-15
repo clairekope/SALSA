@@ -5,17 +5,17 @@ channels:
 
 #NOTE: gcc compiler is needed to install some packages
 dependencies:
-    - python>=3.5
+    - python==3.7
     - pip
     - mpi4py
-    - matplotlib<=3.2.1
-    - numpy==1.16.6
+    - matplotlib<=3.3.4
+    - numpy
     - scipy
-    - yt
+    - yt<=3.6.1
     - pandas
+    - astropy==3.2.3
     - pip:
         - trident
         - spectacle
-        - specutils==0.5.2
-        - gwcs==0.10.0
-        - astropy==3.2.3
+        - specutils==0.6.1
+        - gwcs==0.11.0
