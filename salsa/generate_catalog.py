@@ -25,7 +25,8 @@ def generate_catalog(ds_file, n_rays,
                      cut_region_filters=[],
                      extractor_kwargs={},
                      units_dict={}, 
-                     abundance_table_args=None):
+                     abundance_table_args=None,
+                     recalculate=True):
 
     """
     Generates a catalog of absorber properties from a given number of lightrays
@@ -106,6 +107,16 @@ def generate_catalog(ds_file, n_rays,
         (only relevant for 'spice' method)
         Default: None
 
+    abundance_table_args: dict, optional
+        Dictionary of parameters for reading alternative abundance data. Has no effect
+        if rays are already saved to disk, unless ``recalculate`` is True.
+
+    recalculate: bool, optional
+        Make Trident redcalculate the number density of ``ion_name`` on-the-fly. This
+        will ignore the values saved to disk, if present, but will *not* overwrite.
+        This is useful if you want to specify different ``abundance_table_args`` 
+        than were used to originally create the ray.
+
     Returns
     -------
     full_catalog: pandas.DataFrame
@@ -174,7 +185,10 @@ def generate_catalog(ds_file, n_rays,
 
         # setup absorber extractor
         abs_ext = AbsorberExtractor(ds, my_ray_files[0], ion_name=ion,
-                                     cut_region_filters=cut_region_filters, abundance_table_args=abundance_table_args, **curr_kwargs)
+                                    cut_region_filters=cut_region_filters, 
+                                    abundance_table_args=abundance_table_args,
+                                    recalculate=recalculate,
+                                    **curr_kwargs)
 
         # get catalogs
         my_df = get_absorbers(abs_ext, my_ray_files, method, fields=fields, units_dict=units_dict)

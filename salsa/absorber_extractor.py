@@ -117,7 +117,8 @@ class AbsorberExtractor():
 
         if not ('all', ion_p_num(self.ion_name)) in self.ray.field_list or recalculate:
             self.data.set_field_parameter("reading_func_args",self.abundance_table_args)
-            atom, ion = self.ion_name.split(' ')
+            atom = self.ion_name.split(' ')[0]
+            ion = int(ion_p_num(self.ion_name).split('_')[1][1:]) + 1
             trident.add_ion_number_density_field(atom, ion, self.ds, ftype)
 
         if absorber_min is None:
