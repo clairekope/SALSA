@@ -24,7 +24,8 @@ def generate_catalog(ds_file, n_rays,
                      ftype='gas',
                      cut_region_filters=[],
                      extractor_kwargs={},
-                     units_dict={}, reading_func_args=None):
+                     units_dict={}, 
+                     abundance_table_args=None):
 
     """
     Generates a catalog of absorber properties from a given number of lightrays
@@ -173,7 +174,7 @@ def generate_catalog(ds_file, n_rays,
 
         # setup absorber extractor
         abs_ext = AbsorberExtractor(ds, my_ray_files[0], ion_name=ion,
-                                     cut_region_filters=cut_region_filters, abundance_table_args=reading_func_args, **curr_kwargs)
+                                     cut_region_filters=cut_region_filters, abundance_table_args=abundance_table_args, **curr_kwargs)
 
         # get catalogs
         my_df = get_absorbers(abs_ext, my_ray_files, method, fields=fields, units_dict=units_dict)

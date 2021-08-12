@@ -120,6 +120,7 @@ def check_rays(ray_dir, n_rays, fields, parallel=True):
             my_ray_files = ray_files
 
         # check if fields are in each ray
+        failed_list = []
         for rfile in my_ray_files:
             #load ray file
             try:
@@ -129,14 +130,13 @@ def check_rays(ray_dir, n_rays, fields, parallel=True):
                 raise RuntimeError(f"Couldn't load {rfile}. Delete these rays so new ones can be constructed")
 
             # check each field is in ray
-            for fld in fields:
-                if ('all', fld) in ray.field_list:
-                    pass
-                else:
-                    raise RuntimeError(f"{fld} not present in {rfile}. Either delete these rays so new ones can be constructed or remove this field")
-
-        # all rays passed
+            # for fld in fields:
+            #     if ('all', fld) in ray.field_list:
+            #         pass
+            #     else:
+            #         raise RuntimeError(f"{fld} not present in {rfile}. Either delete these rays so new ones can be constructed or remove this field")
         return True
+
     else:
         if len(ray_files) == 0:
             print(f"No rays found, Constructing new ones")
@@ -180,7 +180,7 @@ def combine_pandas_files(directory, kw='ice', outfile=None):
     for f in files:
         dfs.append(pd.read_hdf(f"{directory}/{f}"))
 
-    if len(tables) >0:
+    if len(dfs) >0:
         #combine tables
         main_table = pd.concat(dfs, ignore_index=True)
 

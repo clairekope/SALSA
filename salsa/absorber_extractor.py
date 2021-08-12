@@ -70,6 +70,20 @@ class AbsorberExtractor():
         between 0 and 1.
         Default: 0.8
 
+    recalculate: bool, optional
+        Make Trident redcalculate the number density of ``ion_name`` on-the-fly. This
+        will ignore the values saved to disk, if present, but will *not* overwrite.
+        This is useful if you want to specify different ``abundance_table_args`` 
+        than were used to originally create the ray.
+
+    ftype : str
+        Used if desired ion is missing or ``recalculate`` is True.
+        The field to be passed to trident that ion fields will be added to, i.e.
+        ``('gas', 'H_p0_number_density')``. ``'gas'`` should work for most grid-based
+        simulations. For particle-based simulations this will not work and needs
+        to be changed. ``'PartType0'`` often works though it varies.
+        See ``trident.add_ion_fields()`` for more information
+
     abundance_table_args: dict, optional
         Dictionary of parameters for reading alternative abundance data.
 
@@ -80,8 +94,7 @@ class AbsorberExtractor():
                  wavelength_center=None, velocity_res = 10,
                  spectacle_defaults=None, spectacle_res=None,
                  absorber_min=None, frac=0.8,
-                 abundance_table_args=None):
-
+                 recalculate=False, ftype='gas', abundance_table_args=None):
 
 
         #set file names and ion name
@@ -101,6 +114,11 @@ class AbsorberExtractor():
 
         #open up the dataset and ray files
         self.load_ray(self.ray_filename)
+
+        if not ('all', ion_p_num(self.ion_name)) in self.ray.field_list or recalculate:
+            self.data.set_field_parameter("reading_func_args",self.abundance_table_args)
+            atom, ion = self.ion_name.split(' ')
+            trident.add_ion_number_density_field(atom, ion, self.ds, ftype)
 
         if absorber_min is None:
             if self.ion_name in default_cloud_dict.keys():
