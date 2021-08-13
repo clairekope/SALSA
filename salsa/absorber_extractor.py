@@ -452,7 +452,7 @@ class AbsorberExtractor():
             self.data.set_field_parameter("reading_func_args", self.abundance_table_args)
             atom = self.ion_name.split(' ')[0]
             ion = int(ion_p_num(self.ion_name).split('_')[1][1:]) + 1
-            trident.add_ion_number_density_field(atom, ion, self.ds, self.ftype)
+            trident.add_ion_number_density_field(atom, ion, self.ray, self.ftype)
 
         num_density = self.data[ion_p_num(self.ion_name)].in_units("cm**(-3)")
         dl_list = self.data['dl'].in_units('cm')
