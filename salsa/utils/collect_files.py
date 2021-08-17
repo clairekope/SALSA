@@ -130,11 +130,14 @@ def check_rays(ray_dir, n_rays, fields, parallel=True):
                 raise RuntimeError(f"Couldn't load {rfile}. Delete these rays so new ones can be constructed")
 
             # check each field is in ray
-            # for fld in fields:
-            #     if ('all', fld) in ray.field_list:
-            #         pass
-            #     else:
-            #         raise RuntimeError(f"{fld} not present in {rfile}. Either delete these rays so new ones can be constructed or remove this field")
+            for fld in fields:
+                if ('all', fld) in ray.field_list:
+                    pass
+                else:
+                    raise RuntimeError(f"{fld} not present in {rfile}. " 
+                    "Either delete these rays so new ones can be constructed with this field, "
+                    " remove this field from the list,"
+                    " or run with `recalculate=True` to ignore all on-disk ion fields.")
         return True
 
     else:
@@ -142,7 +145,8 @@ def check_rays(ray_dir, n_rays, fields, parallel=True):
             print(f"No rays found, Constructing new ones")
             return False
         else:
-            raise RuntimeError(f"found {len(ray_files)} rays instead of {n_rays}. Either delete rays or change number of rays to match")
+            raise RuntimeError(f"found {len(ray_files)} rays instead of {n_rays}."
+            " Either delete rays or change number of rays to match")
 
 def combine_astropy_files(directory, kw='ice', outfile=None):
 

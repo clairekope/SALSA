@@ -449,10 +449,16 @@ class AbsorberExtractor():
         """
 
         if not ('all', ion_p_num(self.ion_name)) in self.ray.field_list or self.recalculate:
-            self.data.set_field_parameter("reading_func_args", self.abundance_table_args)
-            atom = self.ion_name.split(' ')[0]
-            ion = int(ion_p_num(self.ion_name).split('_')[1][1:]) + 1
-            trident.add_ion_number_density_field(atom, ion, self.ray, self.ftype)
+            if self.recalculate:
+                self.data.set_field_parameter("reading_func_args", self.abundance_table_args)
+                atom = self.ion_name.split(' ')[0]
+                ion = int(ion_p_num(self.ion_name).split('_')[1][1:]) + 1
+                trident.add_ion_number_density_field(atom, ion, self.ray, self.ftype)
+            else:
+                raise RuntimeError(f"Ion {self.ion_name} not present in ray. " 
+                    "Either delete this rays so new ones can be constructed with this field, "
+                    " remove this field from the list,"
+                    " or run with `recalculate=True` to ignore all on-disk ion fields.")
 
         num_density = self.data[ion_p_num(self.ion_name)].in_units("cm**(-3)")
         dl_list = self.data['dl'].in_units('cm')
