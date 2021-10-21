@@ -89,6 +89,8 @@ class AbsorberExtractor():
         self.ray_filename = ray_filename
         self.ion_name = ion_name
         self.cut_region_filters = cut_region_filters
+        if not (0 < frac < 1):
+            raise RuntimeError(f"frac {frac} must be between 0 and 1.")
         self.frac = frac
 
         #add ion name to list of all ions to be plotted
