@@ -515,7 +515,9 @@ class AbsorberExtractor():
         ion_list = [line]
 
         #use auto feature to capture full line
-        spect_gen = trident.SpectrumGenerator(lambda_min="auto", lambda_max="auto", dlambda = self.velocity_res, bin_space="velocity")
+        spect_gen = trident.SpectrumGenerator(lambda_min="auto", lambda_max="auto", 
+                                              dlambda = self.velocity_res, bin_space="velocity",
+                                              abundance_dict = self.abundance_table)
         spect_gen.make_spectrum(self.data, lines=ion_list)
 
         #get fields from spectra and give correct units

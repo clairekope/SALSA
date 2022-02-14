@@ -105,6 +105,7 @@ def construct_rays(ds_file,
         fld_params=None,
         line_list=None,
         other_fields=None,
+        abundance_table=None,
         ftype='gas',
         out_dir='./'):
     """
@@ -133,6 +134,13 @@ def construct_rays(ds_file,
     other_fields : list
         other yt fields to add to light rays. None defaults
         to density, metallicity, and temperature
+
+    abundance_table : dict, optional
+        Dictionary of elemental abundances normalized to hydrogen. Keys should
+        be elemental symbols, e.g., 'He'. By default, Trident assumes the solar
+        abundances of REF. Entries in this dictionary will replace the default
+        solar values. To completely replace the default solar abundances, specify
+        the dictionary should include all elements up through zinc.
 
     ftype : str
         The field to be passed to trident that ion fields will be added to, i.e.
@@ -174,6 +182,7 @@ def construct_rays(ds_file,
                                 fields=other_fields,
                                 ftype=ftype,
                                 field_parameters=fld_params,
+                                abundance_dict=abundance_table,
                                 data_filename=ray_filename)
 
     comm.Barrier()
@@ -282,5 +291,6 @@ def generate_lrays(ds, center,
                    fld_params=fld_params,
                    line_list=ion_list,
                    other_fields=construct_fields,
+                   abundance_table=abundance_table,
                    ftype=ftype,
                    out_dir=out_dir)

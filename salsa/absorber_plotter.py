@@ -46,8 +46,12 @@ class AbsorberPlotter(AbsorberExtractor):
     absorber_fields : list of strings, optional
         Additional ions to include in plots/Spectra, enter as list.
 
-    abundance_table_args: dict, optional
-        Dictionary of parameters for reading alternative abundance data.
+     abundance_table: dict, optional
+        Dictionary of elemental abundances normalized to hydrogen. Keys should
+        be elemental symbols, e.g., 'He'. By default, Trident assumes the solar
+        abundances of REF. Entries in this dictionary will replace the default
+        solar values. To completely replace the default solar abundances, specify
+        the dictionary should include all elements up through zinc.
 
     north_vector : array type, optional
         vector used to fix the orientation of the slice plot defaults to z-axis
@@ -135,7 +139,7 @@ class AbsorberPlotter(AbsorberExtractor):
                  cut_region_filters=None,
                  slice_field=None,
                  absorber_fields=[],
-                 abundance_table_args=None,
+                 abundance_table=None,
                  north_vector=[0, 0, 1],
                  center_gal = None,
                  wavelength_center=None,
@@ -170,7 +174,7 @@ class AbsorberPlotter(AbsorberExtractor):
         self.ion_list = [ion_name] + absorber_fields
 
         #add ion fields to dataset if not already there
-        trident.add_ion_fields(self.ds, ions=self.ion_list, ftype=ftype)
+        trident.add_ion_fields(self.ds, ions=self.ion_list, ftype=ftype, abundance_dict=abundance_table)
 
         #set a value for slice
         self.slice = None
@@ -221,7 +225,7 @@ class AbsorberPlotter(AbsorberExtractor):
         self.wavelegnth_res = wavelength_res
         self.velocity_width = velocity_width
         self.velocity_res = velocity_res
-        self.abundance_table_args = abundance_table_args
+        self.abundance_table = abundance_table
 
         #default spectacle resolution to velocity_res
         if spectacle_res is None:
@@ -439,7 +443,8 @@ class AbsorberPlotter(AbsorberExtractor):
         spect_gen = trident.SpectrumGenerator(lambda_min=vel_min,
                                               lambda_max=vel_max,
                                               dlambda = self.velocity_res,
-                                              bin_space="velocity")
+                                              bin_space="velocity",
+                                              abundance_dict=self.abundance_table)
 
         #generate spectra and return fields
         spect_gen.make_spectrum(self.data, lines=ion_list,
@@ -513,10 +518,10 @@ class AbsorberPlotter(AbsorberExtractor):
         wave_max = rest_wavelength + self.wavelength_width/2
 
         #use wavelength_width to set the range
-        spect_gen = trident.SpectrumGenerator(lambda_min=wave_min, lambda_max=wave_max, dlambda = self.wavelegnth_res)
+        spect_gen = trident.SpectrumGenerator(lambda_min=wave_min, lambda_max=wave_max, dlambda = self.wavelegnth_res,
+                                              abundance_dict=self.abundance_table)
         spect_gen.make_spectrum(self.data, lines=ion_list,
-                                observing_redshift=self.ds.current_redshift,
-                                abundance_table_args=self.abundance_table_args)
+                                observing_redshift=self.ds.current_redshift)
 
 
         #get fields from spectra and give correct units
