@@ -186,6 +186,7 @@ def generate_lrays(ds, center,
                 ion_list=['H I', 'C IV', 'O VI'],
                 fields=None,
                 ftype='gas',
+                abundance_table=None,
                 out_dir='./'):
     """
     Generate a sample of trident lightrays that randomly, uniformly cover
@@ -223,6 +224,13 @@ def generate_lrays(ds, center,
         simulations. For particle-based simulations this will not work and needs
         to be changed. 'PartType0' often works though it varies.
         See trident.add_ion_fields() for more information
+
+    abundance_table : dict, optional
+        Dictionary of elemental abundances normalized to hydrogen. Keys should
+        be elemental symbols, e.g., 'He'. By default, Trident assumes the solar
+        abundances of REF. Entries in this dictionary will replace the default
+        solar values. To completely replace the default solar abundances, specify
+        the dictionary should include all elements up through zinc.
 
     out_dir : string
         path to where ray files will be written
@@ -268,7 +276,7 @@ def generate_lrays(ds, center,
                 construct_fields.remove(coord)
 
     #add ion fields to dataset if not already there
-    trident.add_ion_fields(ds, ions=ion_list, ftype=ftype)
+    trident.add_ion_fields(ds, ions=ion_list, ftype=ftype, abundance_dict=abundance_table)
 
     construct_rays(ds, start_pnts, end_pnts,
                    fld_params=fld_params,

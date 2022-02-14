@@ -25,7 +25,7 @@ def generate_catalog(ds_file, n_rays,
                      cut_region_filters=[],
                      extractor_kwargs={},
                      units_dict={}, 
-                     abundance_table_args=None,
+                     abundance_table=None,
                      recalculate=True):
 
     """
@@ -113,8 +113,8 @@ def generate_catalog(ds_file, n_rays,
 
     recalculate: bool, optional
         Make Trident redcalculate the number density of ``ion_name`` on-the-fly. This
-        will ignore the values saved to disk, if present, but will *not* overwrite.
-        This is useful if you want to specify different ``abundance_table_args`` 
+        will ignore the values saved to disk, if present, but will **not overwrite**.
+        This is useful if you want to, e.g., specify a different ``abundance_table`` 
         than were used to originally create the ray.
 
     Returns
@@ -161,6 +161,7 @@ def generate_catalog(ds_file, n_rays,
                     ion_list=ion_list,
                     fields=fields,
                     ftype=ftype,
+                    abundance_table=abundance_table,
                     out_dir=ray_directory)
 
     comm.Barrier()
@@ -186,7 +187,7 @@ def generate_catalog(ds_file, n_rays,
         # setup absorber extractor
         abs_ext = AbsorberExtractor(ds, my_ray_files[0], ion_name=ion,
                                     cut_region_filters=cut_region_filters, 
-                                    abundance_table_args=abundance_table_args,
+                                    abundance_table=abundance_table,
                                     recalculate=recalculate,
                                     **curr_kwargs)
 
