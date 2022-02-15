@@ -70,19 +70,19 @@ class AbsorberExtractor():
         between 0 and 1.
         Default: 0.8
 
-    recalculate: bool, optional
-        Make Trident redcalculate the number density of ``ion_name`` on-the-fly. This
-        will ignore the values saved to disk, if present, but will **not overwrite**.
-        This is useful if you want to, e.g., specify a different ``abundance_table`` 
-        than were used to originally create the ray.
+    calc_missing: bool, optional
+        Make Trident calculate the number density of ``ion_name`` on-the-fly
+        instead of failing if a field is not present.
+        Default: False
 
     ftype : str
-        Used if desired ion is missing or ``recalculate`` is True.
+        Used if desired ion is missing and ``calc_missing`` is True.
         The field to be passed to trident that ion fields will be added to, i.e.
         ``('gas', 'H_p0_number_density')``. ``'gas'`` should work for most grid-based
         simulations. For particle-based simulations this will not work and needs
         to be changed. ``'PartType0'`` often works though it varies.
         See ``trident.add_ion_fields()`` for more information
+        Default: "gas"
 
     abundance_table: dict, optional
         Dictionary of elemental abundances normalized to hydrogen. Keys should
@@ -90,6 +90,7 @@ class AbsorberExtractor():
         abundances of REF. Entries in this dictionary will replace the default
         solar values. To completely replace the default solar abundances, specify
         the dictionary should include all elements up through zinc.
+        Default: None (solar abundances)
 
     """
 
@@ -98,7 +99,7 @@ class AbsorberExtractor():
                  wavelength_center=None, velocity_res = 10,
                  spectacle_defaults=None, spectacle_res=None,
                  absorber_min=None, frac=0.8,
-                 recalculate=False, ftype='gas', abundance_table=None):
+                 calc_missing=False, ftype='gas', abundance_table=None):
 
         #set file names and ion name
         if isinstance(ds_filename, str):
@@ -110,7 +111,7 @@ class AbsorberExtractor():
         self.ion_name = ion_name
         self.cut_region_filters = cut_region_filters
         self.frac = frac
-        self.recalculate = recalculate
+        self.calc_missing = calc_missing
         self.ftype = ftype
         self.abundance_table = abundance_table
 
@@ -451,8 +452,8 @@ class AbsorberExtractor():
             List of the indices that indicate the start and end of each absorber.
         """
 
-        if not ('all', ion_p_num(self.ion_name)) in self.ray.field_list or self.recalculate:
-            if self.recalculate:
+        if not ('all', ion_p_num(self.ion_name)) in self.ray.field_list:
+            if self.calc_missing:
                 #self.data.set_field_parameter("reading_func_args", self.abundance_table)
                 atom = self.ion_name.split(' ')[0]
                 ion = int(ion_p_num(self.ion_name).split('_')[1][1:]) + 1
@@ -462,7 +463,7 @@ class AbsorberExtractor():
                 raise RuntimeError(f"Ion {self.ion_name} not present in ray. " 
                     "Either delete this rays so new ones can be constructed with this field, "
                     " remove this field from the list,"
-                    " or run with `recalculate=True` to ignore all on-disk ion fields.")
+                    " or run with `calc_missing=True`.")
 
         num_density = self.data[ion_p_num(self.ion_name)].in_units("cm**(-3)")
         dl_list = self.data['dl'].in_units('cm')

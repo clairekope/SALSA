@@ -137,7 +137,7 @@ def check_rays(ray_dir, n_rays, fields, parallel=True):
                     raise RuntimeError(f"{fld} not present in {rfile}. " 
                     "Either delete these rays so new ones can be constructed with this field, "
                     " remove this field from the list,"
-                    " or run with `recalculate=True` to ignore all on-disk ion fields.")
+                    " or run with `calc_missing=True`.")
         return True
 
     else:
