@@ -102,7 +102,7 @@ def random_sightlines(ds_file, center, num_sightlines, max_impact_param, min_imp
 def construct_rays(ds_file,
         start_points,
         end_points,
-        fld_params=None,
+        field_parameters=None,
         line_list=None,
         other_fields=None,
         abundance_table=None,
@@ -123,7 +123,7 @@ def construct_rays(ds_file,
     end_points : numpy array
         1d array of end points for each ray (code_length)
 
-    fld_params: dict, optional
+    field_parameters: dict, optional
         Dictionary of parameters that will be passed to the lightrays. (ie
         `center`, `bulk_velocity`).
         Default: None
@@ -189,7 +189,7 @@ def construct_rays(ds_file,
                                 lines=line_list,
                                 fields=other_fields,
                                 ftype=ftype,
-                                field_parameters=fld_params,
+                                field_parameters=field_parameters,
                                 abundance_dict=abundance_table,
                                 ionization_table=ionization_table,
                                 data_filename=ray_filename)
@@ -203,6 +203,7 @@ def generate_lrays(ds, center,
                 fld_params={},
                 ion_list=['H I', 'C IV', 'O VI'],
                 fields=None,
+                field_parameters=None,
                 ftype='gas',
                 abundance_table=None,
                 ionization_table=None,
@@ -236,6 +237,11 @@ def generate_lrays(ds, center,
 
     fields : list
         fields to add to lightray
+
+    field_parameters: dict, optional
+        Dictionary of parameters that will be passed to the lightrays. (ie
+        `center`, `bulk_velocity`).
+        Default: None
 
     ftype : str
         The field to be passed to trident that ion fields will be added to, i.e.
@@ -309,6 +315,7 @@ def generate_lrays(ds, center,
     construct_rays(ds, start_pnts, end_pnts,
                    fld_params=fld_params,
                    line_list=ion_list,
+                   field_parameters=field_parameters,
                    other_fields=construct_fields,
                    abundance_table=abundance_table,
                    ionization_table=ionization_table,
