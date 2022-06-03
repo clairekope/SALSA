@@ -90,12 +90,18 @@ class AbsorberExtractor():
         abundances of Cloudy. Entries in this dictionary will replace the default
         solar values. To completely replace the default solar abundances, specify
         the dictionary should include all elements up through zinc.
+        **WARNING** Has no effect if ion fields are already saved to disk. 
+        If ``calc_missing`` is True, any ion fields *not* on disk will be 
+        calculated with this abundance table.
         Default: None
 
     ionization_table: str, optional
         Path to an appropriately formatted HDF5 table that can be used to compute
         the ion fraction as a function of density, temperature, metallicity, and
         redshift. When set to None, it uses the table specified in~/.trident/config
+        **WARNING** Has no effect if ion fields are already saved to disk. 
+        If ``calc_missing`` is True, any ion fields *not* on disk will be 
+        calculated with this abundance table.
         Default: None
 
     """
