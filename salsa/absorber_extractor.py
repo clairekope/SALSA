@@ -87,10 +87,16 @@ class AbsorberExtractor():
     abundance_table: dict, optional
         Dictionary of elemental abundances normalized to hydrogen. Keys should
         be elemental symbols, e.g., 'He'. By default, Trident assumes the solar
-        abundances of REF. Entries in this dictionary will replace the default
+        abundances of Cloudy. Entries in this dictionary will replace the default
         solar values. To completely replace the default solar abundances, specify
         the dictionary should include all elements up through zinc.
-        Default: None (solar abundances)
+        Default: None
+
+    ionization_table: str, optional
+        Path to an appropriately formatted HDF5 table that can be used to compute
+        the ion fraction as a function of density, temperature, metallicity, and
+        redshift. When set to None, it uses the table specified in~/.trident/config
+        Default: None
 
     """
 
@@ -99,7 +105,8 @@ class AbsorberExtractor():
                  wavelength_center=None, velocity_res = 10,
                  spectacle_defaults=None, spectacle_res=None,
                  absorber_min=None, frac=0.8,
-                 calc_missing=False, ftype='gas', abundance_table=None):
+                 calc_missing=False, ftype='gas',
+                 abundance_table=None, ionization_table=None):
 
         #set file names and ion name
         if isinstance(ds_filename, str):
@@ -114,6 +121,7 @@ class AbsorberExtractor():
         self.calc_missing = calc_missing
         self.ftype = ftype
         self.abundance_table = abundance_table
+        self.ionization_table = ionization_table
 
         #add ion name to list of all ions to be plotted
         self.ion_list = [ion_name]
@@ -458,7 +466,8 @@ class AbsorberExtractor():
                 atom = self.ion_name.split(' ')[0]
                 ion = int(ion_p_num(self.ion_name).split('_')[1][1:]) + 1
                 trident.add_ion_number_density_field(atom, ion, self.ray, self.ftype, 
-                                                     abundance_dict=self.abundance_table)
+                                                     abundance_dict=self.abundance_table,
+                                                     ionization_table=self.ionization_table)
             else:
                 raise RuntimeError(f"Ion {self.ion_name} not present in ray. " 
                     "Either delete this rays so new ones can be constructed with this field, "
@@ -518,7 +527,8 @@ class AbsorberExtractor():
         #use auto feature to capture full line
         spect_gen = trident.SpectrumGenerator(lambda_min="auto", lambda_max="auto", 
                                               dlambda = self.velocity_res, bin_space="velocity",
-                                              abundance_dict = self.abundance_table)
+                                              abundance_dict = self.abundance_table
+                                              ionization_table = self.ionization_table)
         spect_gen.make_spectrum(self.data, lines=ion_list)
 
         #get fields from spectra and give correct units

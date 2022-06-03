@@ -26,6 +26,7 @@ def generate_catalog(ds_file, n_rays,
                      extractor_kwargs={},
                      units_dict={}, 
                      abundance_table=None,
+                     ionization_table=None,
                      calc_missing=True):
 
     """
@@ -107,10 +108,26 @@ def generate_catalog(ds_file, n_rays,
         (only relevant for 'spice' method)
         Default: None
 
-    abundance_table_args: dict, optional
-        Dictionary of parameters for reading alternative abundance data. Has no effect
-        if ion fields are already saved to disk. If ``calc_missing`` is True, any ion
-        fields *not* on disk will be calculated with this abundance table.
+    abundance_table: dict, optional
+        Dictionary of elemental abundances normalized to hydrogen. Keys should
+        be elemental symbols, e.g., 'He'. By default, Trident assumes the solar
+        abundances of Cloudy. Entries in this dictionary will replace the default
+        solar values. To completely replace the default solar abundances, specify
+        the dictionary should include all elements up through zinc.
+        **WARNING** Has no effect if ion fields are already saved to disk. 
+        If ``calc_missing`` is True, any ion fields *not* on disk will be 
+        calculated with this abundance table.
+        Default: None
+
+    ionization_table: str, optional
+        Path to an appropriately formatted HDF5 table that can be used to compute
+        the ion fraction as a function of density, temperature, metallicity, and
+        redshift. When set to None, it uses the table specified in~/.trident/config
+        **WARNING** Has no effect if ion fields are already saved to disk. 
+        If ``calc_missing`` is True, any ion fields *not* on disk will be 
+        calculated with this abundance table.
+        Default: None
+
 
     calc_missing: bool, optional
         Make Trident calculate the number density of ``ion_name`` on-the-fly instead
@@ -161,6 +178,7 @@ def generate_catalog(ds_file, n_rays,
                     fields=fields,
                     ftype=ftype,
                     abundance_table=abundance_table,
+                    ionization_table=ionization_table,
                     out_dir=ray_directory)
 
     comm.Barrier()
@@ -187,6 +205,7 @@ def generate_catalog(ds_file, n_rays,
         abs_ext = AbsorberExtractor(ds, my_ray_files[0], ion_name=ion,
                                     cut_region_filters=cut_region_filters, 
                                     abundance_table=abundance_table,
+                                    ionization_table=ionization_table,
                                     calc_missing=calc_missing,
                                     **curr_kwargs)
 

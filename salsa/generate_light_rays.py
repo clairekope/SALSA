@@ -106,6 +106,7 @@ def construct_rays(ds_file,
         line_list=None,
         other_fields=None,
         abundance_table=None,
+        ionization_table=None,
         ftype='gas',
         out_dir='./'):
     """
@@ -141,6 +142,13 @@ def construct_rays(ds_file,
         abundances of REF. Entries in this dictionary will replace the default
         solar values. To completely replace the default solar abundances, specify
         the dictionary should include all elements up through zinc.
+        Default: None
+
+    ionization_table: str, optional
+        Path to an appropriately formatted HDF5 table that can be used to compute
+        the ion fraction as a function of density, temperature, metallicity, and
+        redshift. When set to None, it uses the table specified in~/.trident/config
+        Default: None
 
     ftype : str
         The field to be passed to trident that ion fields will be added to, i.e.
@@ -183,6 +191,7 @@ def construct_rays(ds_file,
                                 ftype=ftype,
                                 field_parameters=fld_params,
                                 abundance_dict=abundance_table,
+                                ionization_table=ionization_table,
                                 data_filename=ray_filename)
 
     comm.Barrier()
@@ -196,6 +205,7 @@ def generate_lrays(ds, center,
                 fields=None,
                 ftype='gas',
                 abundance_table=None,
+                ionization_table=None,
                 out_dir='./'):
     """
     Generate a sample of trident lightrays that randomly, uniformly cover
@@ -240,6 +250,13 @@ def generate_lrays(ds, center,
         abundances of REF. Entries in this dictionary will replace the default
         solar values. To completely replace the default solar abundances, specify
         the dictionary should include all elements up through zinc.
+        Default: None
+
+    ionization_table: str, optional
+        Path to an appropriately formatted HDF5 table that can be used to compute
+        the ion fraction as a function of density, temperature, metallicity, and
+        redshift. When set to None, it uses the table specified in~/.trident/config
+        Default: None
 
     out_dir : string
         path to where ray files will be written
@@ -285,12 +302,15 @@ def generate_lrays(ds, center,
                 construct_fields.remove(coord)
 
     #add ion fields to dataset if not already there
-    trident.add_ion_fields(ds, ions=ion_list, ftype=ftype, abundance_dict=abundance_table)
+    trident.add_ion_fields(ds, ions=ion_list, ftype=ftype, 
+                           abundance_dict=abundance_table,
+                           ionization_table=ionization_table)
 
     construct_rays(ds, start_pnts, end_pnts,
                    fld_params=fld_params,
                    line_list=ion_list,
                    other_fields=construct_fields,
                    abundance_table=abundance_table,
+                   ionization_table=ionization_table,
                    ftype=ftype,
                    out_dir=out_dir)
