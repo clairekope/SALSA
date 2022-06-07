@@ -200,7 +200,7 @@ def generate_lrays(ds, center,
                 n_rays, max_impact_param,
                 min_impact_param=0.,
                 length=200,
-                fld_params={},
+                field_parameters={},
                 ion_list=['H I', 'C IV', 'O VI'],
                 fields=None,
                 field_parameters=None,
@@ -292,7 +292,7 @@ def generate_lrays(ds, center,
     #comm.Bcast([imp_param, MPI.DOUBLE])
 
     #add center to field parameters
-    fld_params['center']=center
+    field_parameters['center']=center
 
     #add density field. Needed in absorber calculations
     if fields is None:
@@ -313,7 +313,7 @@ def generate_lrays(ds, center,
                            ionization_table=ionization_table)
 
     construct_rays(ds, start_pnts, end_pnts,
-                   fld_params=fld_params,
+                   field_parameters=field_parameters,
                    line_list=ion_list,
                    field_parameters=field_parameters,
                    other_fields=construct_fields,
