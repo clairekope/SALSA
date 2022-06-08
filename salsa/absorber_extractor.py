@@ -363,7 +363,7 @@ class AbsorberExtractor():
 
             # set single cell absorber to zero velocity variance
             if end-start == 1:
-                vel_variance=np.nan
+                vel_variance=0.0
             else:
                 #weighted sample variance
                 vel_variance=col_density \
