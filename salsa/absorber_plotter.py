@@ -3,7 +3,13 @@ mpl.use('Agg')
 import yt
 import trident
 import numpy as np
-from spectacle.fitting import LineFinder1D
+import warnings
+
+try:
+    from spectacle.fitting import LineFinder1D
+except ImportError:
+    warnings.warn("spectacle not installed.")
+
 from sys import argv, path
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
@@ -14,7 +20,7 @@ import astropy.units  as u
 from yt.data_objects.static_output import \
     Dataset
 
-from salsa.utils.functions import ion_p_num
+from salsa.utils.functions import ion_p_num, requires_spectacle
 from salsa.utils.defaults import default_units_dict, default_limits_dict, default_cloud_dict
 from salsa.absorber_extractor import AbsorberExtractor
 
@@ -447,7 +453,7 @@ class AbsorberPlotter(AbsorberExtractor):
             ax.set_ylim(0, 1.05)
             ax.set_xlim(vel_min, vel_max)
             ax.xaxis.set_minor_locator(AutoMinorLocator(2))
-            ax.set_title(f"Rel. to line {self.wavelength_center:.1f} $\AA$", loc='right')
+            ax.set_title(f"Rel. to line {self.wavelength_center:.1f}"+r"$\AA$", loc='right')
             ax.set_xlabel("Delta_v (km/s)")
             ax.set_ylabel("Flux")
             ax.grid(zorder=0, which='both')
@@ -523,7 +529,7 @@ class AbsorberPlotter(AbsorberExtractor):
             ax.set_xlim(wave_min, wave_max)
             ax.xaxis.set_minor_locator(AutoMinorLocator(2))
             ax.set_title(f"Spectrum {self.ion_name}", loc='right')
-            ax.set_xlabel("Wavelength $\AA$")
+            ax.set_xlabel(r"Wavelength $\AA$")
             ax.set_ylabel("Flux")
             ax.grid(zorder=0, which='both')
 
@@ -843,6 +849,7 @@ class AbsorberPlotter(AbsorberExtractor):
 
         return line_text, line_models
 
+    @requires_spectacle
     def _get_large_spectacle(self):
         """
         Return the total column density found by spectacle and the 3 largest

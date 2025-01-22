@@ -2,8 +2,13 @@ import yt
 import trident
 import numpy as np
 import pandas as pd
+import warnings
 
-from spectacle.fitting import LineFinder1D
+try:
+    from spectacle.fitting import LineFinder1D
+except ImportError:
+    warnings.warn("spectacle not installed.")
+
 from numpy.linalg import norm
 import astropy.units  as u
 from astropy.table import QTable
@@ -11,7 +16,7 @@ from astropy.table import QTable
 from yt.data_objects.static_output import \
     Dataset
 
-from salsa.utils.functions import ion_p_num
+from salsa.utils.functions import ion_p_num, requires_spectacle
 from salsa.utils.defaults import default_cloud_dict
 
 class AbsorberExtractor():
@@ -347,6 +352,7 @@ class AbsorberExtractor():
         self.spice_df = stats_table
         return self.spice_df
 
+    @requires_spectacle
     def get_spectacle_absorbers(self):
         """
         Uses spectacle to fit a trident made spectra of the specified ion.

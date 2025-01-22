@@ -1,16 +1,21 @@
 from setuptools import setup, find_packages
-import os
-
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 #base dependencies
 #NOTE: gcc compiler is needed to install some packages
-dependecies=['numpy', 'yt<=3.6.1', 'trident<=1.2.3', 
-             'matplotlib<=3.3.4', 'pandas',
-             'scipy', 'mpi4py']
+dependecies=['trident~=1.3',
+             'yt~=4.2',
+             'matplotlib',
+             'numpy',
+             'scipy',
+             'pandas',
+             'mpi4py']
 
-opt_spectacle=['astropy<=4', 'specutils<=0.6.1', 'gwcs<=0.11.0', 'spectacle']
+opt_spectacle=['astropy<=4',
+               'specutils<=0.6.1', 
+               'gwcs<=0.11.0', 
+               'spectacle']
 
 setup(name="astro-salsa",
       version="1.0.0",
@@ -23,6 +28,11 @@ setup(name="astro-salsa",
       keywords = ["simulation", "spectra", "astronomy", "astrophysics"],
       url="https://github.com/biboyd/SALSA",
       packages=find_packages(),
-      classifiers=[ "Programming Language :: Python :: 3"],
+      classifiers=["Programming Language :: Python :: 3",
+                   "Programming Language :: Python :: 3.8",
+                   "Programming Language :: Python :: 3.9",
+                   "Programming Language :: Python :: 3.10",
+                   "Programming Language :: Python :: 3.11"],
+      python_requires=">=3.8, <3.12",
       install_requires=dependecies,
-      extra_require={'spectacle':opt_spectacle)
+      extras_require={'spectacle':opt_spectacle})

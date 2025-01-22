@@ -63,3 +63,16 @@ def ion_p_num(ion_name):
     #combine all the names
     outname = f"{ip}_number_density"
     return outname
+
+def requires_spectacle(function):
+    def wrapped(*args, **kwargs):
+
+        try:
+            import spectacle as _
+        except ImportError:
+            raise ImportError("spectacle is required for this feature. Please install salsa[spectacle] for the necessary dependencies.")
+        else:
+            result = function(*args, **kwargs)
+            
+        return result
+    return wrapped
