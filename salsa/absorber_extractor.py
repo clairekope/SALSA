@@ -40,7 +40,7 @@ class AbsorberExtractor():
 
     wavelegnth_center: float, optional
         The specific absorption line to look at (in unit Angstrom). None
-        defaults to strongest absorption line for speciofied ion
+        defaults to strongest absorption line for specified ion
         (using trident's ion table).
         Default: None
 
